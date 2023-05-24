@@ -7,24 +7,22 @@ class Channel:
     """Класс для ютуб-канала"""
 
     api_key: str = os.getenv('YT_API_KEY')  # берет значение переменной окружения
-    youtube = build('youtube', 'v3', developerKey=api_key)  # создает объект для работы с API
+    youtube: str = build('youtube', 'v3', developerKey=api_key)  # создает объект для работы с API
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется по id канала """
-        self.__channel_id = channel_id
+        self.__channel_id: str = channel_id  # id канала
 
-        # Получаем данные канала по api и преобразуем из json в словарь
-        channel = self.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        self.channel_data_json = json.dumps(channel, indent=2, ensure_ascii=False)
-        self.channel_data_dict = json.loads(self.channel_data_json)
+        # Получаем данные канала по api
+        self.channel: dict = self.youtube.channels().list(id=self.__channel_id, part='snippet,statistics').execute()
 
         # Создаём необходимые атрибуты
-        self.title = self.channel_data_dict['items'][0]['snippet']['title']  # название канала
-        self.description = self.channel_data_dict['items'][0]['snippet']['description']  # описание канала
-        self.url = f"https://www.youtube.com/channel/{self.channel_data_dict['items'][0]['id']}"  # ссылка на канал
-        self.subscriberCount = int(self.channel_data_dict['items'][0]['statistics']['subscriberCount'])  # число подписчиков
-        self.video_count = int(self.channel_data_dict['items'][0]['statistics']['videoCount'])  # количество видео на канале
-        self.viewCount = int(self.channel_data_dict['items'][0]['statistics']['viewCount'])  # количество просмотров
+        self.title: str = self.channel['items'][0]['snippet']['title']  # название канала
+        self.description: str = self.channel['items'][0]['snippet']['description']  # описание канала
+        self.url: str = f"https://www.youtube.com/channel/{self.channel['items'][0]['id']}"  # ссылка на канал
+        self.subscriberCount: int = int(self.channel['items'][0]['statistics']['subscriberCount'])  # число подписчиков
+        self.video_count: int = int(self.channel['items'][0]['statistics']['videoCount'])  # количество видео на канале
+        self.viewCount: int = int(self.channel['items'][0]['statistics']['viewCount'])  # количество просмотров
 
     def __str__(self) -> str:
         """Возвращает информацию о канале: название(ссылка) """
@@ -60,7 +58,7 @@ class Channel:
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале """
-        print(self.channel_data_json)
+        print(self.channel)
 
     @property
     def channel_id(self) -> str:
