@@ -16,8 +16,8 @@ class Video:
         self.video: dict = self.youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails', id=self.video_id).execute()
 
         # Создаём необходимые атрибуты
-        self.title: str = self.video['items'][0]['snippet']['title']  # название канала
-        self.url: str = f"https://www.youtube.com/watch?v={self.video['items'][0]['id']}"  # ссылка на канал
+        self.title: str = self.video['items'][0]['snippet']['title']  # название видео
+        self.url: str = f"https://www.youtube.com/watch?v={self.video['items'][0]['id']}"  # ссылка на видео
         self.viewCount: int = self.video['items'][0]['statistics']['viewCount']  # количество просмотров
         self.like_count: int = self.video['items'][0]['statistics']['likeCount']  # количество лайков
 
