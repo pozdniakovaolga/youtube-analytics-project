@@ -12,14 +12,22 @@ class Video:
         """Экземпляр инициализируется по id видео """
         self.video_id: str = video_id  # id видео
 
-        # Получаем данные видео по api
-        self.video: dict = self.youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails', id=self.video_id).execute()
-
-        # Создаём необходимые атрибуты
-        self.title: str = self.video['items'][0]['snippet']['title']  # название видео
-        self.url: str = f"https://www.youtube.com/watch?v={self.video['items'][0]['id']}"  # ссылка на видео
-        self.viewCount: int = self.video['items'][0]['statistics']['viewCount']  # количество просмотров
-        self.like_count: int = self.video['items'][0]['statistics']['likeCount']  # количество лайков
+        # Пробуем получить данные видео по api
+        try:
+            video: dict = self.youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails', id=self.video_id).execute()
+            checking_video_data_is_empty = video['items'][0]
+        # Если получить данные о видео невозможно (несуществующий id), все аттрибуты приравниваем к None
+        except IndexError:
+            self.title = None  # название видео
+            self.url = None  # ссылка на видео
+            self.viewCount = None  # количество просмотров
+            self.like_count = None  # количество лайков
+        # Если исключения не возникло и данные получены, создаём необходимые атрибуты
+        else:
+            self.title: str = video['items'][0]['snippet']['title']  # название видео
+            self.url: str = f"https://www.youtube.com/watch?v={video['items'][0]['id']}"  # ссылка на видео
+            self.viewCount: int = video['items'][0]['statistics']['viewCount']  # количество просмотров
+            self.like_count: int = video['items'][0]['statistics']['likeCount']  # количество лайков
 
     def __str__(self) -> str:
         """Возвращает название видео """
